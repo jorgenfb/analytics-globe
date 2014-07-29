@@ -189,7 +189,8 @@ module.exports = function (grunt) {
             '.htaccess',
             'elements/**',
             'images/{,*/}*.{webp,gif}',
-            'bower_components/**'
+            'bower_components/**',
+            'scripts/**'
           ]
         }]
       }
@@ -229,7 +230,7 @@ module.exports = function (grunt) {
     'imagemin',
     'concat',
     'cssmin',
-    'uglify',
+    //'uglify',
     'htmlmin',
     'usemin',
     'clean:tmp'
