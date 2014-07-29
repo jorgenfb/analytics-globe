@@ -1,0 +1,12 @@
+{
+  "name": "analytics-globe",
+  "version": "0.0.0",
+  "dependencies": {
+    "core-elements": "Polymer/core-elements#~0.3.3",
+    "paper-elements": "Polymer/paper-elements#~0.3.3",
+    "polymer": "Polymer/polymer#~0.3.3",
+    "google-analytics": "GoogleWebComponents/google-analytics",
+    "google-signin": "GoogleWebComponents/google-signin#~0.0.7"
+  },
+  "devDependencies": {}
+}
