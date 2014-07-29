@@ -1,0 +1,154 @@
+<link rel="import" href="../bower_components/google-signin/google-signin.html">
+<link rel="import" href="../bower_components/google-analytics/google-analytics-query.html">
+<link rel="import" href="../bower_components/google-analytics/google-analytics-view-selector.html">
+<link rel="import" href="../bower_components/google-analytics/google-analytics-date-selector.html">
+<link rel="import" href="../bower_components/core-icons/core-icons.html">
+<link rel="import" href="../bower_components/core-icon/core-icon.html">
+<link rel="import" href="../bower_components/core-collapse/core-collapse.html">
+<link rel="import" href="google-analytics-globe.html">
+
+<polymer-element name="analytics-globe-app" on-analytics-dashboard-control-change="{{queryUpdated}}" attributes="selectedView selectedProperty selectedAccount">
+  <template>
+    <style>
+      google-signin {
+        font-size: 1.1em;
+        position: absolute;
+        top: 8px;
+        right: 8px;
+      }
+
+      header, footer {
+        position: relative;
+        box-sizing: border-box;
+        position: fixed;
+        width: 100%;
+        padding: 8px;
+      }
+
+      footer {
+        bottom: 0;
+      }
+
+      h1 small {
+        font-size: 0.5em;
+      }
+
+      /**
+       * .control styles.
+       */
+       google-analytics-view-selector::shadow .control,
+       google-analytics-date-selector::shadow .control {
+        display: inline-block;
+        margin: 0 8px 8px 0;
+      }
+      google-analytics-view-selector::shadow .control:last-child,
+      google-analytics-date-selector::shadow .control:last-child {
+        margin-right: 0;
+      }
+      google-analytics-view-selector::shadow .control > label,
+      google-analytics-date-selector::shadow .control > label {
+        display: block;
+        padding: 0 0 .4em 2px;
+      }
+
+
+
+      /**
+       * <google-analytics-view-selector> styles.
+       */
+      google-analytics-view-selector::shadow label {
+        font-weight: bold;
+      }
+      google-analytics-view-selector::shadow select {
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        height: 34px;
+        line-height: 20px;
+        min-width: 160px;
+        padding: 6px 12px;
+        color: #333;
+      }
+      google-analytics-view-selector::shadow select:focus {
+        border-color: #4d90fe;
+        outline: 0;
+      }
+      google-analytics-view-selector::shadow label {
+        font-weight: bold;
+      }
+
+      /**
+       * <google-analytics-date-selector> styles.
+       */
+      google-analytics-date-selector::shadow label {
+       font-weight: bold;
+      }
+      google-analytics-date-selector::shadow input {
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        font: inherit;
+        font-weight: 400;
+        height: 34px;
+        line-height: 20px;
+        min-width: 160px;
+        padding: 6px;
+        color: #333;
+      }
+      google-analytics-date-selector::shadow input:focus {
+        border-color: #4d90fe;
+        outline: 0;
+      }
+    </style>
+    <google-analytics-globe maxResults="10000"></google-analytics-globe>
+
+    <header>
+      <google-signin clientId="739112012212-gdcrqfr9g4f2nlikrllakkbsfvumee67.apps.googleusercontent.com" scopes="https://www.googleapis.com/auth/analytics.readonly"></google-signin>
+      <template if="{{selectedAccount}}">
+        <h1><small>{{selectedProperty}}</small><br>{{selectedView}}</h1>
+      </template>
+    </header>
+
+
+    <footer>
+      <template if="{{!isOpen}}" >
+        <span on-click="{{toggle}}">
+          <core-icon icon="expand-less"></core-icon><span>Settings</span>
+        </span>
+      </template>
+      <template if="{{isOpen}}">
+        <span on-click="{{toggle}}">
+          <core-icon icon="expand-more"></core-icon><span>Hide</span>
+        </span>
+      </template>
+      <core-collapse opened="{{isOpen}}" id="settings">
+          <google-analytics-view-selector></google-analytics-view-selector>
+          <google-analytics-date-selector></google-analytics-date-selector>
+      </core-collapse>
+    </footer>
+  </template>
+
+  <script>
+    Polymer('analytics-globe-app', {
+      queryUpdated: function(event) {
+        var viewSelector = this.shadowRoot.querySelector('google-analytics-view-selector');
+        var globe = this.shadowRoot.querySelector('google-analytics-globe');
+
+        // Update
+        this.selectedAccount = viewSelector.accounts[viewSelector.accountIndex].name;
+        this.selectedProperty = viewSelector.properties[viewSelector.propertyIndex].name;
+        this.selectedView = viewSelector.views[viewSelector.viewIndex].name;
+
+        Object.keys(event.detail).forEach(function(key) {
+          globe[key] = event.detail[key];
+        });
+      },
+
+      toggle: function(){
+        this.$.settings.toggle();
+      }
+
+    });
+  </script>
+
+</polymer-element>

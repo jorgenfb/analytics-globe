@@ -1,0 +1,113 @@
+<link rel="import" href="../bower_components/google-analytics/google-analytics-query.html">
+<script src="../scripts/vendor/three.min.js"></script>
+<script src="../scripts/vendor/globe.js"></script>
+
+<polymer-element name="google-analytics-globe" extends="google-analytics-query" attributes="">
+  <template>
+    <style>
+      :host {
+        display: block;
+        width: 100%;
+        height: 20%;
+      }
+      #globe_container {
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+    <div id="globe_container"></div>
+  </template>
+
+  <script>
+    Polymer({
+      metrics: 'ga:visits',
+      dimensions: 'ga:latitude,ga:longitude',
+
+      publish: {
+        /**
+         * True if the chart is currently loading data.
+         *
+         * @attribute loading
+         * @type boolean
+         */
+        loading: {
+          value: false,
+          reflect: true
+        }
+      },
+
+      ready: function() {
+          this.globe = new DAT.Globe(this.$.globe_container, {imgDir: 'images/'});
+      },
+
+      getData: function() {
+        if (this.super()) {
+          this.loading = true;
+        }
+      },
+
+      transformData: function(data){
+        var values = [], latitude, longitude, magnitude;
+        data.rows.forEach(function(d) {
+          latitude = parseFloat(d[0]);
+          longitude = parseFloat(d[1]);
+          magnitude = parseFloat(d[2]);
+
+          values.push(latitude, longitude, magnitude/1000);
+        });
+
+        return [['Interval', values]];
+      },
+
+      handleResponse: function(response) {
+        if (response.error) {
+          this.fire('analytics-query-error', response.error);
+        }
+        else {
+          this.loading = false;
+
+          // Clean up any existing globe
+          this.resetGlobe();
+
+          // Transform response to a dataformat that the globe can consume
+          var data = this.transformData(response);
+
+          for (var i=0;i<data.length;i++) {
+            this.globe.addData(data[i][1], {format: 'magnitude', name: data[i][0], animated: true});
+          }
+
+          this.globe.createPoints();
+          this.globe.time = 0;
+          this.globe.animate();
+        }
+      },
+
+      resetGlobe: function(){
+        // Make sure we have a globe
+        if (this.globe){
+
+          // Check if geometry is created
+          if (this.globe._baseGeometry){
+            this.globe._baseGeometry.dispose(); // Dispose geometry
+            delete this.globe._baseGeometry; // Remove reference
+          }
+
+          // Check if points are created (geometry is already clean up)
+          if (this.globe.points) {
+
+            // Dispose material if defined
+            if (this.globe.points.material) {
+              this.globe.points.material.dispose();
+            }
+
+            // Remove from scene
+            this.globe.points.parent.remove(this.globe.points);
+
+            // Remove ref
+            delete this.globe.points;
+          }
+        }
+      }
+    });
+  </script>
+</polymer-element>
