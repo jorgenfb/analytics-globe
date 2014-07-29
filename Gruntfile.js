@@ -173,7 +173,7 @@ module.exports = function (grunt) {
       default: {
         options: {},
         files: {
-          '<%= yeoman.dist %>/elements/elements.vulcanized.html': ['<%= yeoman.dist %>/elements/elements.html'],
+          '<%= yeoman.dist %>/elements/google-analytics-globe-app.html': ['<%= yeoman.dist %>/elements/google-analytics-globe-app.html']
         }
       }
     },
