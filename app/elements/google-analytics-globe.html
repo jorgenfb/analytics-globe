@@ -36,8 +36,8 @@
         }
       },
 
-      ready: function() {
-          this.globe = new DAT.Globe(this.$.globe_container, {imgDir: 'images/'});
+      init: function() {
+        this.globe = new DAT.Globe(this.$.globe_container, {imgDir: 'images/'});
       },
 
       getData: function() {

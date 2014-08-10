@@ -7,7 +7,7 @@
 <link rel="import" href="../bower_components/core-collapse/core-collapse.html">
 <link rel="import" href="google-analytics-globe.html">
 
-<polymer-element name="analytics-globe-app" on-analytics-dashboard-control-change="{{queryUpdated}}" attributes="selectedView selectedProperty selectedAccount">
+<polymer-element name="analytics-globe-app" on-analytics-dashboard-control-change="{{queryUpdated}}" attributes="selectedView selectedProperty selectedAccount" on-webglSupported="onWebglSupported" on-webglUnsupported="onWebglUnsupported">
   <template>
     <style>
       google-signin {
@@ -99,6 +99,19 @@
         border-color: #4d90fe;
         outline: 0;
       }
+
+      .unsupported {
+        width: 500px;
+        margin: 0 auto;
+        padding: 20px;
+        background: #C31A32;
+        text-align: center;
+        color: white;
+      }
+
+      .unsupported a {
+        color: white;
+      }
     </style>
     <google-analytics-globe maxResults="10000"></google-analytics-globe>
 
@@ -108,7 +121,6 @@
         <h1><small>{{selectedProperty}}</small><br>{{selectedView}}</h1>
       </template>
     </header>
-
 
     <footer>
       <template if="{{!isOpen}}" >
@@ -130,6 +142,27 @@
 
   <script>
     Polymer('analytics-globe-app', {
+      ready: function(){
+        // Check for webgl support
+        try { 
+          // Create canvas element
+          var canvas = document.createElement( 'canvas' );
+
+          // Try accessing a context
+          var test = !!window.WebGLRenderingContext && ( canvas.getContext( 'webgl' ) || canvas.getContext( 'experimental-webgl' ))
+
+          this.webglSupport = !!test;
+
+        } catch( e ) { this.webglSupport = false}
+
+        if (!this.webglSupport) {
+          this.shadowRoot.innerHTML = '<div class="unsupported">Your browser does not seem to support <a href="http://khronos.org/webgl/wiki/Getting_a_WebGL_Implementation">WebGL</a><br/>Find out how to get it <a href="http://get.webgl.org/">here</a>.</div>';
+        } else {
+          // initialize globe
+          var globe = this.shadowRoot.querySelector('google-analytics-globe');
+          globe.init();
+        }
+      },
       queryUpdated: function(event) {
         var viewSelector = this.shadowRoot.querySelector('google-analytics-view-selector');
         var globe = this.shadowRoot.querySelector('google-analytics-globe');
@@ -147,7 +180,6 @@
       toggle: function(){
         this.$.settings.toggle();
       }
-
     });
   </script>
 
