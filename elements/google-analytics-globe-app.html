@@ -3517,6 +3517,7 @@ html /deep/ .core-collapse-closed {
 
       init: function() {
         this.globe = new DAT.Globe(this.$.globe_container, {imgDir: 'images/'});
+        this.globe.renderer.setClearColor(0x000000);
       },
 
       getData: function() {
@@ -3586,6 +3587,39 @@ html /deep/ .core-collapse-closed {
             delete this.globe.points;
           }
         }
+      }
+    });
+  </script>
+</polymer-element>
+</div>
+<div hidden>
+
+
+<script src="../bower_components/screenfull/dist/screenfull.min.js"></script>
+
+<polymer-element name="fullscreen-toggle-button" attributes="" assetpath="">
+  <template>
+    <core-button id="fullscreenToggle" style="display: none;" on-click="{{toggleFullscreen}}">
+      <core-icon icon="fullscreen"></core-icon>
+    </core-button>
+  </template>
+  <script>
+    Polymer('fullscreen-toggle-button',{
+      ready: function(){
+        if (screenfull.enabled){
+          var btn = this.$.fullscreenToggle;
+          var icon = btn.querySelector('core-icon');
+
+          btn.style.display = ''; // Show button when we know fullscreen api is available
+
+          // Listen for changes to fullscreen
+          document.addEventListener(screenfull.raw.fullscreenchange, function () {
+            icon.icon = screenfull.isFullscreen ? 'fullscreen-exit' : 'fullscreen'; // Toggle displayed icon
+          });
+        }
+      },
+      toggleFullscreen: function(){
+        screenfull.toggle();
       }
     });
   </script>
@@ -3708,6 +3742,7 @@ html /deep/ .core-collapse-closed {
     </header>
 
     <footer>
+      <fullscreen-toggle-button style="float: right;"></fullscreen-toggle-button>
       <template if="{{!isOpen}}">
         <span on-click="{{toggle}}">
           <core-icon icon="expand-less"></core-icon><span>Settings</span>
@@ -3729,7 +3764,7 @@ html /deep/ .core-collapse-closed {
     Polymer('analytics-globe-app', {
       ready: function(){
         // Check for webgl support
-        try { 
+        try {
           // Create canvas element
           var canvas = document.createElement( 'canvas' );
 

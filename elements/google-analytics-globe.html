@@ -38,6 +38,7 @@
 
       init: function() {
         this.globe = new DAT.Globe(this.$.globe_container, {imgDir: 'images/'});
+        this.globe.renderer.setClearColor(0x000000);
       },
 
       getData: function() {
