@@ -1,0 +1,32 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/core-icons/core-icons.html">
+<link rel="import" href="../bower_components/core-icon/core-icon.html">
+<script src="../bower_components/screenfull/dist/screenfull.min.js"></script>
+
+<polymer-element name="fullscreen-toggle-button" attributes="">
+  <template>
+    <core-button id="fullscreenToggle" style="display: none;" on-click="{{toggleFullscreen}}">
+      <core-icon  icon="fullscreen" ></core-icon>
+    </core-button>
+  </template>
+  <script>
+    Polymer({
+      ready: function(){
+        if (screenfull.enabled){
+          var btn = this.$.fullscreenToggle;
+          var icon = btn.querySelector('core-icon');
+
+          btn.style.display = ''; // Show button when we know fullscreen api is available
+
+          // Listen for changes to fullscreen
+          document.addEventListener(screenfull.raw.fullscreenchange, function () {
+            icon.icon = screenfull.isFullscreen ? 'fullscreen-exit' : 'fullscreen'; // Toggle displayed icon
+          });
+        }
+      },
+      toggleFullscreen: function(){
+        screenfull.toggle();
+      }
+    });
+  </script>
+</polymer-element>

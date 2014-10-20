@@ -6,6 +6,7 @@
 <link rel="import" href="../bower_components/core-icon/core-icon.html">
 <link rel="import" href="../bower_components/core-collapse/core-collapse.html">
 <link rel="import" href="google-analytics-globe.html">
+<link rel="import" href="fullscreen-toggle-button.html">
 
 <polymer-element name="analytics-globe-app" on-analytics-dashboard-control-change="{{queryUpdated}}" attributes="selectedView selectedProperty selectedAccount" on-webglSupported="onWebglSupported" on-webglUnsupported="onWebglUnsupported">
   <template>
@@ -123,6 +124,7 @@
     </header>
 
     <footer>
+      <fullscreen-toggle-button style="float: right;"></fullscreen-toggle-button>
       <template if="{{!isOpen}}" >
         <span on-click="{{toggle}}">
           <core-icon icon="expand-less"></core-icon><span>Settings</span>
@@ -144,7 +146,7 @@
     Polymer('analytics-globe-app', {
       ready: function(){
         // Check for webgl support
-        try { 
+        try {
           // Create canvas element
           var canvas = document.createElement( 'canvas' );
 
